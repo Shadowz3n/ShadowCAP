@@ -42,8 +42,10 @@ TARGETS=()
 echo -e "\n[I] [$IFACE] $IP : $MAC ✔\n"
 
 # Check hosts alive
-for ip in "$IPRANGE".{1..254}; do
-	ping -c 1 $ip &> /dev/null && TARGETS+=($ip)
-done
+echo "[I] Checking hosts alive"
+#for ip in "$IPRANGE".{1..254}; do
+	#echo $ip
+	#ping -c 1 -W 1 $ip &> /dev/null && TARGETS+=($ip)
+#done
 
 echo $TARGETS

@@ -22,7 +22,7 @@ fi
 
 # Check VPN
 GETPEER=$(ip -f inet a|grep -oP "(?<=inet ).+(?=\/)" | grep peer)
-if [[ "$GETPEER" != '' ]]; then
+if [[ $GETPEER ]]; then
 	echo "[${BOLD}✘${NC}] Disable VPN to use this script" 1>&2
 	exit 1
 fi
@@ -40,6 +40,7 @@ MAC=$(ip a |awk '/ether/ {print $2}'|head -n 1)
 NEWMAC=$(od -An -N6 -tx1 /dev/urandom | sed -e 's/^  *//' -e 's/  */:/g' -e 's/:$//' -e 's/^\(.\)[13579bdf]/\10/')
 IPRANGE=$(echo $IP | cut -d'.' -f -1,2,3)
 
+
 # Targets array
 TARGETS=()
 
@@ -48,9 +49,14 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP : $MAC ✔\n"
 
 # Check hosts alive
 echo "[${BOLD}I${NC}] Checking hosts alive"
-#for ip in "$IPRANGE".{1..254}; do
-	#echo $ip
-	#ping -c 1 -W 1 $ip &> /dev/null && TARGETS+=($ip)
-#done
+for ip in "$IPRANGE".{1..254}; do
+	THISARP=$(arp -n $ip | grep ether)
+	if [[ $THISARP ]]; then
+		ARPRESULT=$(echo $THISARP|cut -d' ' -f -1,3)
+		echo $ARPRESULT
+		TARGETS+=$ARPRESULT
+	fi
+done
 
-echo $TARGETS
+#
+#echo "IPS: $TARGETS"

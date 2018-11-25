@@ -49,9 +49,11 @@ NEWMAC=$(od -An -N6 -tx1 /dev/urandom | sed -e 's/^  *//' -e 's/  */:/g' -e 's/:
 IP=$(hostname -I |cut -d' ' -f1)
 MAC=$(ip a |awk '/ether/ {print $2}'|head -n 1)
 IPRANGE=$(echo $IP | cut -d'.' -f -1,2,3)
+GATEWAY=$(ip route | awk '/default/ { print $3 }')
 
 # Targets array
-TARGETS=()
+TARGETS_IPS=()
+TARGETS_MAC_ADDRESS=()
 
 # Display INFO
 echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP : $MAC ✔\n"
@@ -60,14 +62,16 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP : $MAC ✔\n"
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
-	if [[ $THISARP ]]; then
+	if [ "$THISARP" != '' ] && [ "$THISARP" != "$GATEWAY" ]; then
 		echo $(echo $THISARP|cut -d' ' -f -1,3)
-		TARGETS+=$(echo $THISARP|cut -d' ' -f -1,3)
+		TARGETS_IPS+=$ip
+		TARGETS_MAC_ADDRESS+=$(echo $THISARP|cut -d' ' -f3)
 	fi
 done
 
 #arp -s 192.168.1.1 00-00-48-93-00-00
 #ping 192.168.1.1
-for t in ${TARGETS[@]}; do
-	echo $t
+
+for i in "${!TARGETS_IPS[@]}"; do
+	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
 done

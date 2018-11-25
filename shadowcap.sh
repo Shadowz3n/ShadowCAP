@@ -40,13 +40,10 @@ NEWMAC=$(od -An -N6 -tx1 /dev/urandom | sed -e 's/^  *//' -e 's/  */:/g' -e 's/:
 
 # Change to random MAC Address
 echo -e "\n[${BOLD}I${NC}] [$IFACE] Random MAC Address"
-service network-manager stop
-ifconfig $IFACE down
-ifconfig $IFACE hw ether $NEWMAC
-ifconfig $IFACE up
-service network-manager restart
-
-wait;
+sudo ip link set dev $IFACE down
+sudo ip link set dev $IFACE address $NEWMAC
+sudo ip link set dev $IFACE up
+service network-manager restart && wait;
 
 # Get INFO
 IP=$(hostname -I |cut -d' ' -f1)
@@ -64,13 +61,11 @@ echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
 	if [[ $THISARP ]]; then
-		ARPRESULT=$(echo $THISARP|cut -d' ' -f -1,3) && echo $ARPRESULT && TARGETS+=$ARPRESULT
+		echo $(echo $THISARP|cut -d' ' -f -1,3)
+		TARGETS+=$(echo $THISARP|cut -d' ' -f -1,3)
 	fi
 done
 
-for target in $TARGETS; do
-	echo $target
+for t in ${TARGETS[@]}; do
+	echo $t
 done
-
-#
-#echo "IPS: $TARGETS"

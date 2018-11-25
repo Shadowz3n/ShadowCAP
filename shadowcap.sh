@@ -25,7 +25,7 @@ fi
 
 IFACE=$(ip route |grep default |sed -e "s/^.*dev.//" -e "s/.proto.*//")
 IP=$(hostname -I |cut -d' ' -f1)
-MAC=$(ip a |awk '/ether/ {print $2}')
-ALLIPS=$(ip route | awk '/$IFACE/ {print $2}')
+MAC=$(ip a |awk '/ether/ {print $2}'|head -n 1)
+IPRANGE=$(ip a s|grep -A8 -m1 MULTICAST|grep -m1 inet|cut -d' ' -f6)
 
-echo $IP
+echo $IPRANGE

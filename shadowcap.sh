@@ -33,7 +33,17 @@ IFACE=$(ip route |grep default |sed -e "s/^.*dev.//" -e "s/.proto.*//")
 IP=$(hostname -I |cut -d' ' -f1)
 MAC=$(ip a |awk '/ether/ {print $2}'|head -n 1)
 NEWMAC=$(od -An -N6 -tx1 /dev/urandom | sed -e 's/^  *//' -e 's/  */:/g' -e 's/:$//' -e 's/^\(.\)[13579bdf]/\10/')
-IPRANGE=$(ip a s|grep -A8 -m1 MULTICAST|grep -m1 inet|cut -d' ' -f6)
+IPRANGE=$(echo $IP | cut -d'.' -f -1,2,3)
 
+# Targets array
+TARGETS=()
+
+# Display INFO
 echo -e "\n[I] [$IFACE] $IP : $MAC ✔\n"
-echo $NEWMAC
+
+# Check hosts alive
+for ip in "$IPRANGE".{1..254}; do
+	ping -c 1 $ip &> /dev/null && TARGETS+=($ip)
+done
+
+echo $TARGETS

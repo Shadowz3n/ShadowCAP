@@ -2,6 +2,11 @@
 # ShadowCAP
 # @autor: Henrique Bissoli Silva (emp.shad@gmail.com)
 
+# Helpers
+BOLD=$(tput bold)
+NC=$(tput setab 9 && tput sgr0)
+VERSION='0.0.1'
+
 # CTRL + C
 exiting(){
 	tput clear
@@ -11,14 +16,14 @@ exiting(){
 
 # Check if is root
 if [ "$(id -u)" != "0" ]; then
-	echo "[✘] This script must be run as root" 1>&2
+	echo "[${BOLD}✘${NC}] This script must be run as root" 1>&2
 	exit 1
 fi
 
 # Check VPN
 GETPEER=$(ip -f inet a|grep -oP "(?<=inet ).+(?=\/)" | grep peer)
 if [[ "$GETPEER" != '' ]]; then
-	echo "[✘] Disable VPN to use this script" 1>&2
+	echo "[${BOLD}✘${NC}] Disable VPN to use this script" 1>&2
 	exit 1
 fi
 
@@ -39,10 +44,10 @@ IPRANGE=$(echo $IP | cut -d'.' -f -1,2,3)
 TARGETS=()
 
 # Display INFO
-echo -e "\n[I] [$IFACE] $IP : $MAC ✔\n"
+echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP : $MAC ✔\n"
 
 # Check hosts alive
-echo "[I] Checking hosts alive"
+echo "[${BOLD}I${NC}] Checking hosts alive"
 #for ip in "$IPRANGE".{1..254}; do
 	#echo $ip
 	#ping -c 1 -W 1 $ip &> /dev/null && TARGETS+=($ip)

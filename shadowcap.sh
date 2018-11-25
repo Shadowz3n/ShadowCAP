@@ -11,7 +11,7 @@ VERSION='0.0.1'
 exiting(){
 	tput clear
 	echo -e "${BOLD}Exiting..$NC"
-	service network-manager restart && wait;
+	#service network-manager restart && wait;
 	exit 1
 }
 
@@ -39,11 +39,11 @@ IFACE=$(ip route |grep default |sed -e "s/^.*dev.//" -e "s/.proto.*//")
 NEWMAC=$(od -An -N6 -tx1 /dev/urandom | sed -e 's/^  *//' -e 's/  */:/g' -e 's/:$//' -e 's/^\(.\)[13579bdf]/\10/')
 
 # Change to random MAC Address
-echo -e "\n[${BOLD}I${NC}] [$IFACE] Random MAC Address"
-sudo ip link set dev $IFACE down
-sudo ip link set dev $IFACE address $NEWMAC
-sudo ip link set dev $IFACE up
-service network-manager restart && wait;
+#echo -e "\n[${BOLD}I${NC}] [$IFACE] Random MAC Address"
+#sudo ip link set dev $IFACE down
+#sudo ip link set dev $IFACE address $NEWMAC
+#sudo ip link set dev $IFACE up
+#service network-manager restart && wait;
 
 # Get INFO
 IP=$(hostname -I |cut -d' ' -f1)
@@ -66,6 +66,8 @@ for ip in "$IPRANGE".{1..254}; do
 	fi
 done
 
+#arp -s 192.168.1.1 00-00-48-93-00-00
+#ping 192.168.1.1
 for t in ${TARGETS[@]}; do
 	echo $t
 done

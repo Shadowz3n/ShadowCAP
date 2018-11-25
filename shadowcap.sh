@@ -52,9 +52,7 @@ echo "[${BOLD}I${NC}] Checking hosts alive"
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
 	if [[ $THISARP ]]; then
-		ARPRESULT=$(echo $THISARP|cut -d' ' -f -1,3)
-		echo $ARPRESULT
-		TARGETS+=$ARPRESULT
+		ARPRESULT=$(echo $THISARP|cut -d' ' -f -1,3) && echo $ARPRESULT && TARGETS+=$ARPRESULT
 	fi
 done
 

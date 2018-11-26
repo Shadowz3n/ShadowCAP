@@ -7,6 +7,10 @@ BOLD=$(tput bold)
 NC=$(tput setab 9 && tput sgr0)
 VERSION='0.0.1'
 
+# Targets array
+TARGETS_IPS=()
+TARGETS_MAC_ADDRESS=()
+
 # Exit function
 exiting(){
 	tput clear
@@ -14,6 +18,9 @@ exiting(){
 	echo 0 > /proc/sys/net/ipv4/ip_forward
 	echo 0 > /proc/sys/net/ipv4/ip_nonlocal_bind
 	echo 0 > /proc/sys/net/ipv4/conf/all/arp_filter
+	for i in "${!TARGETS_IPS[@]}"; do
+		arp -s "${TARGETS_IPS[$i]} $TARGETS_MAC_ADDRESS"
+	done
 	#service network-manager restart && wait;
 	exit 1
 }
@@ -60,10 +67,6 @@ MAC=$(ip a |awk '/ether/ {print $2}'|head -n 1)
 IPRANGE=$(echo $IP | cut -d'.' -f -1,2,3)
 GATEWAY=$(ip route | awk '/default/ { print $3 }')
 
-# Targets array
-TARGETS_IPS=()
-TARGETS_MAC_ADDRESS=()
-
 # Display INFO
 echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔"
 echo -e "[${BOLD}I${NC}] [Gateway] $GATEWAY ✔\n"
@@ -85,5 +88,6 @@ done
 
 #arp -s 192.168.1.1 00-00-48-93-00-00
 for i in "${!TARGETS_IPS[@]}"; do
-	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]} new MAC Address: $MAC"
+	arp -s "${TARGETS_IPS[$i]} $MAC"
+	#echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]} new MAC Address: $MAC"
 done

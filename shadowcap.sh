@@ -86,8 +86,8 @@ for ip in "$IPRANGE".{1..254}; do
 	fi
 done
 
-#arp -s 192.168.1.1 00-00-48-93-00-00
+# Spoof
 for i in "${!TARGETS_IPS[@]}"; do
 	arp -s "${TARGETS_IPS[$i]} $MAC"
-	#echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]} new MAC Address: $MAC"
+	ping -i 0.3 "${TARGETS_IPS[$i]}" &>/dev/null
 done

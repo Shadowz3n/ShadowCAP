@@ -11,7 +11,7 @@ VERSION='0.0.1'
 exiting(){
 	tput clear
 	echo -e "${BOLD}Exiting..$NC"
-	echo $IPRANGEPING
+	echo 0 > /proc/sys/net/ipv4/ip_forward
 	#service network-manager restart && wait;
 	exit 1
 }
@@ -66,7 +66,7 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔\n"
 # Check hosts alive
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
 
-# Ping ip range
+# Ping broadcast
 ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null;wait;
 
 # Check ARP
@@ -79,7 +79,6 @@ for ip in "$IPRANGE".{1..254}; do
 done
 
 #arp -s 192.168.1.1 00-00-48-93-00-00
-#ping 192.168.1.1
 for i in "${!TARGETS_IPS[@]}"; do
-	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
+	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]} new MAC Address: $MAC"
 done

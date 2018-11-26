@@ -7,13 +7,18 @@ BOLD=$(tput bold)
 NC=$(tput setab 9 && tput sgr0)
 VERSION='0.0.1'
 
-# CTRL + C
+# Exit function
 exiting(){
 	tput clear
 	echo -e "${BOLD}Exiting..$NC"
+	kill -9 $IPRANGEPING
 	#service network-manager restart && wait;
 	exit 1
 }
+
+trap exiting SIGINT # Ctrl+C
+trap exiting SIGQUIT # Terminate
+trap exiting SIGTSTP # Ctrl+Z
 
 # Check if is root
 if [ "$(id -u)" != "0" ]; then
@@ -60,10 +65,15 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔\n"
 
 # Check hosts alive
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
-for ip in "$IPRANGE".{1..254}; do
-	ping -c1 -i 0.1 $ip &>/dev/null
-done
 
+# Ping ip range
+ping -b -i 0.1 "$IPRANGE".254 &>/dev/null
+IPRANGEPING=$$
+
+echo $IPRANGEPING
+exit 1
+
+# Check ARP
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
 	if ([[ $THISARP ]] && [ "$(echo $THISARP|cut -d' ' -f -1,3)" != "$GATEWAY" ]); then

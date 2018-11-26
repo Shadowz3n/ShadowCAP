@@ -11,7 +11,7 @@ VERSION='0.0.1'
 exiting(){
 	tput clear
 	echo -e "${BOLD}Exiting..$NC"
-	kill -9 $IPRANGEPING
+	echo $IPRANGEPING
 	#service network-manager restart && wait;
 	exit 1
 }
@@ -67,11 +67,7 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔\n"
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
 
 # Ping ip range
-ping -b -i 0.1 "$IPRANGE".254 &>/dev/null
-IPRANGEPING=$$
-
-echo $IPRANGEPING
-exit 1
+ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null
 
 # Check ARP
 for ip in "$IPRANGE".{1..254}; do

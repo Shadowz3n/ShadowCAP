@@ -65,7 +65,8 @@ TARGETS_IPS=()
 TARGETS_MAC_ADDRESS=()
 
 # Display INFO
-echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔\n"
+echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔"
+echo -e "[${BOLD}I${NC}] [Gateway] $GATEWAY ✔\n"
 
 # Check hosts alive
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
@@ -76,7 +77,7 @@ ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null;wait;
 # Check ARP
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
-	if ([[ $THISARP ]] && [ "$(echo $THISARP|cut -d' ' -f -1,3)" != "$GATEWAY" ]); then
+	if ([[ $THISARP ]] && [ "$(echo $THISARP|cut -d' ' -f -1)" != "$GATEWAY" ]); then
 		TARGETS_IPS+=($ip)
 		TARGETS_MAC_ADDRESS+=($(echo $THISARP|cut -d' ' -f3))
 	fi

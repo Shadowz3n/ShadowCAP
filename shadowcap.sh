@@ -73,14 +73,13 @@ ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null;wait;
 for ip in "$IPRANGE".{1..254}; do
 	THISARP=$(arp -n $ip | grep ether)
 	if ([[ $THISARP ]] && [ "$(echo $THISARP|cut -d' ' -f -1,3)" != "$GATEWAY" ]); then
-		echo $(echo $THISARP|cut -d' ' -f -1,3)
-		TARGETS_IPS+=$ip
-		TARGETS_MAC_ADDRESS+=$(echo $THISARP|cut -d' ' -f3)
+		TARGETS_IPS+=($ip)
+		TARGETS_MAC_ADDRESS+=($(echo $THISARP|cut -d' ' -f3))
 	fi
 done
 
 #arp -s 192.168.1.1 00-00-48-93-00-00
 #ping 192.168.1.1
-#for i in "${!TARGETS_IPS[@]}"; do
-#	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
-#done
+for i in "${!TARGETS_IPS[@]}"; do
+	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
+done

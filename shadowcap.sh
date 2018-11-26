@@ -12,6 +12,8 @@ exiting(){
 	tput clear
 	echo -e "${BOLD}Exiting..$NC"
 	echo 0 > /proc/sys/net/ipv4/ip_forward
+	echo 0 > /proc/sys/net/ipv4/ip_nonlocal_bind
+	echo 0 > /proc/sys/net/ipv4/conf/all/arp_filter
 	#service network-manager restart && wait;
 	exit 1
 }
@@ -35,6 +37,8 @@ fi
 
 # Enable IP forwarding
 echo 1 > /proc/sys/net/ipv4/ip_forward
+echo 1 > /proc/sys/net/ipv4/ip_nonlocal_bind
+echo 1 > /proc/sys/net/ipv4/conf/all/arp_filter
 
 # Packets targeting port 80 is delivered to local app listening on 8080
 iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 8080

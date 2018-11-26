@@ -67,7 +67,7 @@ echo -e "\n[${BOLD}I${NC}] [$IFACE] $IP: $MAC ✔\n"
 echo -e "[${BOLD}I${NC}] Checking hosts alive:\n"
 
 # Ping ip range
-ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null
+ping -c -i 0.1 -b "$IPRANGE".255 &>/dev/null;wait;
 
 # Check ARP
 for ip in "$IPRANGE".{1..254}; do
@@ -81,6 +81,6 @@ done
 
 #arp -s 192.168.1.1 00-00-48-93-00-00
 #ping 192.168.1.1
-for i in "${!TARGETS_IPS[@]}"; do
-	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
-done
+#for i in "${!TARGETS_IPS[@]}"; do
+#	echo "${TARGETS_IPS[$i]}: ${TARGETS_MAC_ADDRESS[$i]}"
+#done
